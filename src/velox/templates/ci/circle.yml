@@ -1,0 +1,14 @@
+# .circleci/config.yml
+version: 2.1
+
+jobs:
+  perf-test:
+    docker:
+      - image: ghcr.io/appboy-io/velox
+    environment:
+      TARGET_URL: "https://your-app.example.com"
+    steps:
+      - checkout
+      - run:
+          name: Run Velox Performance Test
+          command: velox run tests/perf.yaml

@@ -1,0 +1,9 @@
+# bitbucket-pipelines.yml
+pipelines:
+  custom:
+    perf-test:
+      - step:
+          name: Run Velox Performance Test
+          image: ghcr.io/appboy-io/velox
+          script:
+            - velox run tests/perf.yaml

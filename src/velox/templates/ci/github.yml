@@ -1,0 +1,18 @@
+# .github/workflows/velox.yml
+name: Performance Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+
+jobs:
+  perf-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Velox Performance Test
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/tests:/tests \
+            -e TARGET_URL=${{ vars.TARGET_URL }} \
+            ghcr.io/appboy-io/velox run /tests/perf.yaml
