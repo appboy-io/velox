@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="logo.svg" alt="Velox" width="384" height="384">
+  <img src="logo.svg" alt="Velox" width="192" height="192">
 </p>
 
 <h1 align="center">Velox</h1>
