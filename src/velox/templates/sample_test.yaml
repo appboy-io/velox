@@ -1,0 +1,33 @@
+name: "Sample API Test"
+baseUrl: "https://jsonplaceholder.typicode.com"
+
+config:
+  users: 5
+  rampUp: "10s"
+  duration: "30s"
+
+flow:
+  - name: "List Posts"
+    method: GET
+    path: "/posts"
+    threshold:
+      p95: "500ms"
+
+  - name: "Get Single Post"
+    method: GET
+    path: "/posts/1"
+    extract:
+      userId: "$.userId"
+    threshold:
+      p95: "300ms"
+
+  - name: "Get User"
+    method: GET
+    path: "/users/${userId}"
+
+threshold:
+  p95: "1s"
+  errorRate: "5%"
+
+results:
+  push: false
