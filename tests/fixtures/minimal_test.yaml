@@ -1,0 +1,6 @@
+name: "Simple GET"
+baseUrl: "https://example.com"
+flow:
+  - name: "Homepage"
+    method: GET
+    path: "/"

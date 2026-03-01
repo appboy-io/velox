@@ -1,0 +1,41 @@
+name: "Checkout Flow"
+baseUrl: "https://api.example.com"
+
+config:
+  users: 100
+  rampUp: "30s"
+  duration: "5m"
+
+variables:
+  apiKey: "test-key-123"
+
+flow:
+  - name: "Login"
+    method: POST
+    path: "/auth/login"
+    headers:
+      Content-Type: "application/json"
+    body:
+      username: "testuser"
+      password: "testpass"
+    extract:
+      token: "$.accessToken"
+    threshold:
+      p95: "200ms"
+
+  - name: "Get Products"
+    method: GET
+    path: "/products"
+    headers:
+      Authorization: "Bearer ${token}"
+    threshold:
+      p95: "300ms"
+
+threshold:
+  p95: "2s"
+  errorRate: "1%"
+
+results:
+  push: true
+  branchSuffix: "-perf-results"
+  remote: "origin"
