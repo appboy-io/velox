@@ -1,6 +1,10 @@
-# Velox
+<p align="center">
+  <img src="logo.svg" alt="Velox" width="128" height="128">
+</p>
 
-YAML-driven Gatling performance testing CLI.
+<h1 align="center">Velox</h1>
+
+<p align="center">YAML-driven Gatling performance testing CLI.</p>
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10+-green.svg)](https://www.python.org)
