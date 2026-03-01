@@ -11,3 +11,4 @@ venv/
 htmlcov/
 results/
 *.generated.scala
+docs/plans/
