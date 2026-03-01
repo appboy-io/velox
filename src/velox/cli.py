@@ -59,17 +59,44 @@ def validate(test_file: str) -> None:
         raise typer.Exit(code=1)
 
 
+CI_PLATFORMS = {
+    "github": (".github/workflows/velox.yml", "ci/github.yml"),
+    "circle": (".circleci/config.yml", "ci/circle.yml"),
+    "bitbucket": ("bitbucket-pipelines.yml", "ci/bitbucket.yml"),
+}
+
+
 @app.command()
-def init() -> None:
-    """Scaffold a sample YAML test file."""
+def init(
+    ci: str = typer.Option(None, "--ci", help="Generate CI/CD workflow: github, circle, or bitbucket"),
+) -> None:
+    """Scaffold a sample YAML test file and optionally a CI/CD workflow."""
+    # Always create sample YAML
     dest = Path("velox-sample.yaml")
     if dest.exists():
         console.print(f"[yellow]![/yellow] {dest} already exists, skipping")
-        return
-    source = _get_sample_yaml_path()
-    shutil.copy(source, dest)
-    console.print(f"[green]✓[/green] Created {dest}")
-    console.print("  Edit it with your API details, then run: velox run velox-sample.yaml")
+    else:
+        source = _get_sample_yaml_path()
+        shutil.copy(source, dest)
+        console.print(f"[green]✓[/green] Created {dest}")
+
+    # Optionally create CI workflow
+    if ci:
+        ci = ci.lower()
+        if ci not in CI_PLATFORMS:
+            console.print(f"[red]✗[/red] Unknown CI platform: {ci}. Use: github, circle, or bitbucket")
+            raise typer.Exit(code=1)
+
+        dest_path, template_name = CI_PLATFORMS[ci]
+        dest_file = Path(dest_path)
+        dest_file.parent.mkdir(parents=True, exist_ok=True)
+
+        template_source = Path(__file__).parent / "templates" / template_name
+        shutil.copy(template_source, dest_file)
+        console.print(f"[green]✓[/green] Created {dest_file}")
+        console.print(f"  Set TARGET_URL in your CI/CD environment variables")
+    elif ci is None:
+        console.print("  Edit it with your API details, then run: velox run velox-sample.yaml")
 
 
 @app.command()
