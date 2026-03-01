@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "velox"
 version = "0.1.0"
 description = "YAML-driven Gatling performance testing CLI"
+license = "Apache-2.0"
 requires-python = ">=3.10"
 dependencies = [
     "typer>=0.9.0",
