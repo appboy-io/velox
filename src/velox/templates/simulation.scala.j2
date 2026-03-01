@@ -1,0 +1,42 @@
+package velox.generated
+
+import io.gatling.core.Predef._
+import io.gatling.http.Predef._
+import scala.concurrent.duration._
+
+class {{ class_name }}Simulation extends Simulation {
+
+  val httpProtocol = http
+    .baseUrl("{{ base_url }}")
+
+  val scn = scenario("{{ scenario_name }}")
+    .group("{{ scenario_name }}") {
+      {% for step in steps %}
+      exec(
+        http("{{ step.name }}")
+          .{{ step.method | lower }}("{{ step.path }}")
+          {% if step.headers %}
+          {% for key, value in step.headers.items() %}
+          .header("{{ key }}", "{{ value }}")
+          {% endfor %}
+          {% endif %}
+          {% if step.body %}
+          .body(StringBody("""{{ step.body_json }}""")).asJson
+          {% endif %}
+          {% if step.extractions %}
+          {% for var_name, json_path in step.extractions.items() %}
+          .check(jsonPath("{{ json_path }}").saveAs("{{ var_name }}"))
+          {% endfor %}
+          {% endif %}
+      )
+      {% if not loop.last %}
+      .pause(1)
+      {% endif %}
+      {% endfor %}
+    }
+
+  setUp(
+    scn.inject(rampUsers({{ users }}).during({{ ramp_up_seconds }}))
+  ).protocols(httpProtocol)
+    .maxDuration({{ duration_seconds }}.seconds)
+}
