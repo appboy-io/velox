@@ -1,0 +1,38 @@
+name: "Authenticated API Test"
+baseUrl: "$ENV{BASE_URL}"
+
+config:
+  users: 3
+  rampUp: "5s"
+  duration: "20s"
+
+flow:
+  - name: "Create Resource"
+    method: POST
+    path: "/api/resources"
+    headers:
+      Authorization: "Bearer $ENV{API_KEY}"
+      Content-Type: "application/json"
+    body:
+      name: "test-resource"
+      type: "benchmark"
+      tags: ["performance", "automated"]
+    extract:
+      id: "$.id"
+    threshold:
+      p95: "800ms"
+
+  - name: "Get Resource"
+    method: GET
+    path: "/api/resources/${id}"
+    headers:
+      Authorization: "Bearer $ENV{API_KEY}"
+    threshold:
+      p95: "300ms"
+
+threshold:
+  p95: "1s"
+  errorRate: "5%"
+
+results:
+  push: false

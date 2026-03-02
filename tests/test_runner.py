@@ -36,7 +36,6 @@ class TestGatlingRunner:
 
         result = runner.run(
             simulation_class="TestSimulation",
-            simulations_dir=tmp_path,
             results_dir=results_dir,
         )
         assert result.returncode == 0
@@ -56,6 +55,5 @@ class TestGatlingRunner:
         with pytest.raises(GatlingRunError):
             runner.run(
                 simulation_class="TestSimulation",
-                simulations_dir=tmp_path,
                 results_dir=tmp_path / "results",
             )

@@ -47,21 +47,22 @@ def orchestrate_run(
     console.print("  ├─ Generating Gatling simulation...")
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%d-%H%M%S")
     slug = definition.name.lower().replace(" ", "-")
-    work_dir = Path("results") / f"{timestamp}-{slug}"
-    sim_dir = work_dir / "simulations"
-    sim_dir.mkdir(parents=True, exist_ok=True)
+    work_dir = Path("results").resolve() / f"{timestamp}-{slug}"
+    work_dir.mkdir(parents=True, exist_ok=True)
 
     class_name = _to_class_name(definition.name)
-    sim_file = sim_dir / f"{class_name}Simulation.scala"
+    runner = GatlingRunner()
+    sim_dir = runner.gatling_home / "user-files" / "simulations"
+    package_dir = sim_dir / "velox" / "generated"
+    package_dir.mkdir(parents=True, exist_ok=True)
+    sim_file = package_dir / f"{class_name}Simulation.scala"
     generate_simulation(definition, output_path=sim_file)
 
     # 4. Run Gatling
     console.print("  ├─ Launching Gatling...")
-    runner = GatlingRunner()
     gatling_results_dir = work_dir / "gatling-output"
     runner.run(
         simulation_class=f"velox.generated.{class_name}Simulation",
-        simulations_dir=sim_dir,
         results_dir=gatling_results_dir,
     )
 
@@ -136,7 +137,7 @@ def orchestrate_run(
         html_dest = report_dir / "html"
         shutil.copytree(html_reports[0].parent, html_dest, dirs_exist_ok=True)
 
-    console.print(f"  ├─ Reports: ./{report_dir}")
+    console.print(f"  ├─ Reports: {report_dir}")
 
     # 9. Push results if configured
     if definition.results.push:

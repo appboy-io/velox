@@ -40,17 +40,18 @@ class TestEndToEnd:
 
         # Step 2: Mock the Gatling runner to produce a simulation.log
         mock_runner = MagicMock()
+        mock_runner.gatling_home = mock_gatling
         mock_runner_cls.return_value = mock_runner
 
-        def fake_run(simulation_class, simulations_dir, results_dir):
+        def fake_run(simulation_class, results_dir):
             results_dir.mkdir(parents=True, exist_ok=True)
             sim_log = results_dir / "test-run" / "simulation.log"
             sim_log.parent.mkdir(parents=True, exist_ok=True)
             sim_log.write_text(
                 "RUN\tvelox\ttest\t1709312400000\t \t3.9.5\n"
-                "GROUP\tCheckout Flow\t1\tCheckout Flow\t1709312400000\t1709312401500\tOK\n"
-                "REQUEST\tCheckout Flow\t1\tLogin\t1709312400000\t1709312400150\tOK\n"
-                "REQUEST\tCheckout Flow\t1\tGet Products\t1709312400200\t1709312400420\tOK\n"
+                "GROUP\tCheckout Flow\t1709312400000\t1709312401500\t1500\tOK\n"
+                "REQUEST\tCheckout Flow\tLogin\t1709312400000\t1709312400150\tOK\n"
+                "REQUEST\tCheckout Flow\tGet Products\t1709312400200\t1709312400420\tOK\n"
             )
             return MagicMock(returncode=0)
 

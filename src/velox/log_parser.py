@@ -93,19 +93,19 @@ def parse_simulation_log(path: Path) -> SimulationMetrics:
 
         record_type = parts[0]
 
-        if record_type == "REQUEST" and len(parts) >= 7:
+        if record_type == "REQUEST" and len(parts) >= 6:
             metrics.requests.append(
                 RequestRecord(
-                    name=parts[3],
-                    start_ms=int(parts[4]),
-                    end_ms=int(parts[5]),
-                    status=parts[6],
+                    name=parts[2],
+                    start_ms=int(parts[3]),
+                    end_ms=int(parts[4]),
+                    status=parts[5],
                 )
             )
-        elif record_type == "GROUP" and len(parts) >= 7:
-            metrics.group_name = parts[3]
-            start = int(parts[4])
-            end = int(parts[5])
+        elif record_type == "GROUP" and len(parts) >= 6:
+            metrics.group_name = parts[1]
+            start = int(parts[2])
+            end = int(parts[3])
             metrics.group_duration_ms = end - start
 
     return metrics

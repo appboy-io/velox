@@ -41,8 +41,9 @@ def run(
         )
     except GatlingRunError as e:
         console.print(f"  ├─ [red]✗ {e}[/red]")
-        if e.stderr:
-            console.print(f"  └─ [dim]{e.stderr.strip()}[/dim]")
+        detail = e.stderr.strip() or e.stdout.strip() if hasattr(e, 'stdout') else e.stderr.strip()
+        if detail:
+            console.print(f"  └─ [dim]{detail}[/dim]")
         raise typer.Exit(code=1)
     if not passed:
         raise typer.Exit(code=1)

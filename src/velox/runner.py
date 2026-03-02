@@ -15,10 +15,11 @@ class GatlingNotFoundError(Exception):
 class GatlingRunError(Exception):
     """Raised when Gatling exits with a non-zero code."""
 
-    def __init__(self, message: str, returncode: int, stderr: str):
+    def __init__(self, message: str, returncode: int, stderr: str, stdout: str = ""):
         super().__init__(message)
         self.returncode = returncode
         self.stderr = stderr
+        self.stdout = stdout
 
 
 @dataclass
@@ -46,7 +47,6 @@ class GatlingRunner:
     def run(
         self,
         simulation_class: str,
-        simulations_dir: Path,
         results_dir: Path,
     ) -> GatlingResult:
         """Run a Gatling simulation."""
@@ -58,8 +58,8 @@ class GatlingRunner:
 
         cmd = [
             str(gatling_bin),
+            "--run-mode", "local",
             "--simulation", simulation_class,
-            "--simulations-folder", str(simulations_dir),
             "--results-folder", str(results_dir),
             "--no-reports",
         ]
@@ -75,6 +75,7 @@ class GatlingRunner:
                 f"Gatling exited with code {result.returncode}",
                 returncode=result.returncode,
                 stderr=result.stderr,
+                stdout=result.stdout,
             )
 
         return GatlingResult(
