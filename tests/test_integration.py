@@ -40,9 +40,10 @@ class TestEndToEnd:
 
         # Step 2: Mock the Gatling runner to produce a simulation.log
         mock_runner = MagicMock()
+        mock_runner.gatling_home = mock_gatling
         mock_runner_cls.return_value = mock_runner
 
-        def fake_run(simulation_class, simulations_dir, results_dir):
+        def fake_run(simulation_class, results_dir):
             results_dir.mkdir(parents=True, exist_ok=True)
             sim_log = results_dir / "test-run" / "simulation.log"
             sim_log.parent.mkdir(parents=True, exist_ok=True)

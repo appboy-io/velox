@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:17-jdk-jammy
 
 ARG GATLING_VERSION=3.9.5
 ARG PYTHON_VERSION=3.10
