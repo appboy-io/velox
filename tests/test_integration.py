@@ -49,9 +49,9 @@ class TestEndToEnd:
             sim_log.parent.mkdir(parents=True, exist_ok=True)
             sim_log.write_text(
                 "RUN\tvelox\ttest\t1709312400000\t \t3.9.5\n"
-                "GROUP\tCheckout Flow\t1\tCheckout Flow\t1709312400000\t1709312401500\tOK\n"
-                "REQUEST\tCheckout Flow\t1\tLogin\t1709312400000\t1709312400150\tOK\n"
-                "REQUEST\tCheckout Flow\t1\tGet Products\t1709312400200\t1709312400420\tOK\n"
+                "GROUP\tCheckout Flow\t1709312400000\t1709312401500\t1500\tOK\n"
+                "REQUEST\tCheckout Flow\tLogin\t1709312400000\t1709312400150\tOK\n"
+                "REQUEST\tCheckout Flow\tGet Products\t1709312400200\t1709312400420\tOK\n"
             )
             return MagicMock(returncode=0)
 
