@@ -74,9 +74,9 @@ class TestGenerateSimulation:
         assert "accessToken" in code
         assert "jsonPath" in code or "jsonpath" in code.lower()
 
-    def test_includes_group_for_flow(self, full_definition):
+    def test_includes_scenario_for_flow(self, full_definition):
         code = generate_simulation(full_definition)
-        assert "group(" in code
+        assert "scenario(" in code
 
     def test_writes_to_file(self, simple_definition, tmp_path):
         output = tmp_path / "Simulation.scala"
