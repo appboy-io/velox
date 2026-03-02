@@ -61,7 +61,6 @@ class GatlingRunner:
             "--run-mode", "local",
             "--simulation", simulation_class,
             "--results-folder", str(results_dir),
-            "--no-reports",
         ]
 
         result = subprocess.run(
