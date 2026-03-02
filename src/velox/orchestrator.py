@@ -9,7 +9,7 @@ from pathlib import Path
 from rich.console import Console
 
 from velox.evaluator import evaluate_thresholds, ThresholdResult
-from velox.generator import generate_simulation
+from velox.generator import generate_simulation, _to_class_name
 from velox.interpolation import resolve_env_vars
 from velox.log_parser import parse_simulation_log
 from velox.models import TestDefinition
@@ -51,7 +51,8 @@ def orchestrate_run(
     sim_dir = work_dir / "simulations"
     sim_dir.mkdir(parents=True, exist_ok=True)
 
-    sim_file = sim_dir / "Simulation.scala"
+    class_name = _to_class_name(definition.name)
+    sim_file = sim_dir / f"{class_name}Simulation.scala"
     generate_simulation(definition, output_path=sim_file)
 
     # 4. Run Gatling
@@ -59,7 +60,7 @@ def orchestrate_run(
     runner = GatlingRunner()
     gatling_results_dir = work_dir / "gatling-output"
     runner.run(
-        simulation_class="velox.generated." + sim_file.stem + "Simulation",
+        simulation_class=f"velox.generated.{class_name}Simulation",
         simulations_dir=sim_dir,
         results_dir=gatling_results_dir,
     )

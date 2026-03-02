@@ -30,13 +30,20 @@ def run(
 ) -> None:
     """Run a performance test from a YAML definition."""
     from velox.orchestrator import orchestrate_run
+    from velox.runner import GatlingRunError
 
     path = Path(test_file)
-    passed = orchestrate_run(
-        test_file=path,
-        base_url_override=base_url,
-        users_override=users,
-    )
+    try:
+        passed = orchestrate_run(
+            test_file=path,
+            base_url_override=base_url,
+            users_override=users,
+        )
+    except GatlingRunError as e:
+        console.print(f"  ├─ [red]✗ {e}[/red]")
+        if e.stderr:
+            console.print(f"  └─ [dim]{e.stderr.strip()}[/dim]")
+        raise typer.Exit(code=1)
     if not passed:
         raise typer.Exit(code=1)
 
