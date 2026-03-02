@@ -17,6 +17,8 @@ flow:
       name: "test-resource"
       type: "benchmark"
       tags: ["performance", "automated"]
+    extract:
+      id: "$.id"
     threshold:
       p95: "800ms"
 
@@ -25,8 +27,6 @@ flow:
     path: "/api/resources/${id}"
     headers:
       Authorization: "Bearer $ENV{API_KEY}"
-    extract:
-      id: "$.id"
     threshold:
       p95: "300ms"
 

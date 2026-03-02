@@ -16,10 +16,13 @@ Define performance tests in YAML instead of writing Scala — Velox generates an
 ## Quick Start
 
 ```bash
-pip install velox
-velox init
-# edit velox-sample.yaml with your API details
-velox run velox-sample.yaml
+docker pull ghcr.io/appboy-io/velox
+
+# scaffold a sample test
+docker run --rm -v $(pwd):/tests ghcr.io/appboy-io/velox init
+
+# edit velox-sample.yaml with your API details, then run
+docker run --rm -v $(pwd):/tests ghcr.io/appboy-io/velox run /tests/velox-sample.yaml
 ```
 
 ## YAML Example
@@ -43,14 +46,8 @@ flow:                # sequence of HTTP requests each user executes
   - name: "Get Single Post"
     method: GET
     path: "/posts/1"
-    extract:
-      userId: "$.userId"   # JSONPath extraction for chaining requests
     threshold:
       p95: "300ms"
-
-  - name: "Get User"
-    method: GET
-    path: "/users/${userId}"   # variable interpolation from extracted values
 
 threshold:           # global thresholds applied to the entire test
   p95: "1s"
@@ -58,6 +55,45 @@ threshold:           # global thresholds applied to the entire test
 
 results:             # result storage options
   push: false        # push results to a dedicated VCS branch
+```
+
+### Using API Keys and Request Bodies
+
+```yaml
+name: "Authenticated API Test"
+baseUrl: "$ENV{BASE_URL}"              # read from environment variable
+
+flow:
+  - name: "Create Resource"
+    method: POST
+    path: "/api/resources"
+    headers:
+      Authorization: "Bearer $ENV{API_KEY}"
+    body:
+      name: "test-resource"
+      type: "benchmark"
+    extract:
+      id: "$.id"                       # extract id from response
+    threshold:
+      p95: "800ms"
+
+  - name: "Get Resource"
+    method: GET
+    path: "/api/resources/${id}"       # use extracted value
+    headers:
+      Authorization: "Bearer $ENV{API_KEY}"
+    threshold:
+      p95: "300ms"
+```
+
+Run with environment variables:
+
+```bash
+docker run --rm \
+  -v $(pwd):/tests \
+  -e BASE_URL=https://api.example.com \
+  -e API_KEY=your-key \
+  ghcr.io/appboy-io/velox run /tests/auth-test.yaml
 ```
 
 ## CLI Commands
@@ -79,7 +115,15 @@ Override flags for `run`:
 
 ```bash
 docker pull ghcr.io/appboy-io/velox
-docker run --rm -v $(pwd)/tests:/tests ghcr.io/appboy-io/velox run /tests/perf.yaml
+
+# run a test
+docker run --rm -v $(pwd):/tests ghcr.io/appboy-io/velox run /tests/perf.yaml
+
+# validate without running
+docker run --rm -v $(pwd):/tests ghcr.io/appboy-io/velox validate /tests/perf.yaml
+
+# override users and base URL
+docker run --rm -v $(pwd):/tests ghcr.io/appboy-io/velox run /tests/perf.yaml --users 10 --base-url https://staging.example.com
 ```
 
 ## CI/CD
